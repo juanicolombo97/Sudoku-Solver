@@ -256,7 +256,7 @@ def format_time(secs):
     mat = " " + str(minute) + ":" + str(sec)
     return mat
 
-def game_gui(keys_diccionary, board):
+def game_gui(keys_diccionary, board, gameTime, lives):
     window = pygame.display.set_mode((540,600))
     pygame.display.set_caption("Sudoku")
     board = Grid(board, 9, 9, 540, 540,window)
@@ -264,10 +264,10 @@ def game_gui(keys_diccionary, board):
     run = True
     start = time.time()
     strikes = 0
-    
     while run:
         play_time = round(time.time() - start)
-        
+        if play_time == gameTime:
+            run = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -285,7 +285,7 @@ def game_gui(keys_diccionary, board):
                         else:
                             print("Wrong")
                             strikes+=1
-                            if(strikes > 3):
+                            if(strikes >= lives):
                                 run = False
                         key = None
 
@@ -307,9 +307,14 @@ def game_gui(keys_diccionary, board):
 
         redraw_window(window, board, play_time, strikes)
         pygame.display.update()
+    
+    if strikes >= lives:
+        return "Perdiste"
+    else:
+        return "Felicidades"
 
-def start_gui(board):
+def start_gui(board, time, lives):
     keys_diccionary = {"49":1, "50":2, "51":3, "52":4, "53":5, "54":6,"55":7, "56":8, "57":9}
-    game_gui(keys_diccionary, board)
+    res = game_gui(keys_diccionary, board, time, lives)
     pygame.quit()
-    return
+    return res
